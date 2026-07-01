@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Lab Cover Page Generator (Colorful Logo)</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --border-color: #000;
+        }
+        * { box-sizing: border-box; font-family: 'Times New Roman', Times, serif; }
+        body { margin: 0; padding: 25px; background: #f0f2f5; display: flex; gap: 25px; min-height: 100vh; }
+        
+        /* Modernized Form Sidebar */
+        .form-container {
+            width: 35%; background: #ffffff; padding: 25px; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); height: calc(100vh - 50px); overflow-y: auto;
+            border: 1px solid #e1e4e8;
+        }
+        .form-container h2 { 
+            margin-top: 0; font-family: system-ui, -apple-system, sans-serif; 
+            color: #1a202c; font-size: 22px; border-bottom: 2px solid #edf2f7; padding-bottom: 15px;
+        }
+        h3 { font-family: system-ui, -apple-system, sans-serif; color: #2d3748; font-size: 16px; margin: 20px 0 10px 0; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; color: #4a5568; }
+        .form-group input { width: 100%; padding: 10px 14px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 14px; transition: all 0.2s; font-family: system-ui, sans-serif; }
+        .form-group input:focus { border-color: #3182ce; outline: none; box-shadow: 0 0 0 3px rgba(66,153,225,0.15); }
+        
+        /* Logo Uploader Styling */
+        .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+        .file-input-btn { border: 2px dashed #cbd5e0; padding: 15px; border-radius: 6px; text-align: center; cursor: pointer; background: #f7fafc; color: #718096; font-family: system-ui, sans-serif; font-size: 13px; font-weight: bold; }
+        .file-input-btn:hover { background: #edf2f7; border-color: #4a5568; }
+        .file-input-wrapper input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+
+        .print-btn {
+            width: 100%; padding: 14px; background: var(--primary-gradient); color: white; border: none;
+            border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; 
+            font-family: system-ui, sans-serif; box-shadow: 0 4px 12px rgba(42,82,152,0.25); transition: transform 0.1s;
+        }
+        .print-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(42,82,152,0.35); }
+
+        /* Premium Preview / Cover Page Canvas */
+        .preview-container { width: 65%; display: flex; justify-content: center; background: #cad1db; padding: 25px; height: calc(100vh - 50px); overflow-y: auto; border-radius: 12px; }
+        
+        .a4-page {
+            width: 210mm; height: 297mm; background: #fff; padding: 18mm;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); position: relative; box-sizing: border-box;
+        }
+        
+        /* Certificate-Style Borders */
+        .outer-border { border: 3px double var(--border-color); height: 100%; width: 100%; padding: 6px; box-sizing: border-box; position: relative; }
+        .inner-border { border: 1px solid var(--border-color); height: 100%; width: 100%; padding: 25px; box-sizing: border-box; display: flex; flex-direction: column; position: relative; }
+        
+        /* Corner Accents */
+        .outer-border::before, .outer-border::after, .inner-border::before, .inner-border::after {
+            content: ''; position: absolute; width: 12px; height: 12px; border: 2px solid var(--border-color); z-index: 1;
+        }
+        .outer-border::before { top: 2px; left: 2px; border-right: none; border-bottom: none; }
+        .outer-border::after { top: 2px; right: 2px; border-left: none; border-bottom: none; }
+        .inner-border::before { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+        .inner-border::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+        /* Header Layout */
+        .header { text-align: center; margin-bottom: 20px; }
+        .university-name { font-size: 22px; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 12px; }
+        
+        .logo-container { width: 90px; height: 90px; margin: 10px auto; display: flex; align-items: center; justify-content: center; }
+        
+        /* UPDATED: Removed grayscale filter to keep the logo fully colorful */
+        .logo-img { 
+            max-width: 100%; 
+            max-height: 100%; 
+            object-fit: contain; 
+        }
+        
+        .logo-placeholder { font-size: 11px; border: 1px dashed #555; padding: 15px; border-radius: 50%; color: #555; font-weight: bold; line-height: 1.2; text-transform: uppercase; }
+
+        .department-name { font-size: 19px; font-weight: bold; margin-top: 15px; letter-spacing: 0.5px; text-transform: capitalize; }
+        
+        /* Course Info */
+        .course-info { text-align: center; margin: 20px 0; font-size: 16px; line-height: 1.5; }
+        .course-info p { margin: 6px 0; }
+        .course-italic { font-style: italic; }
+        .course-bold { font-weight: bold; font-style: normal; }
+
+        /* Handwritten Box Grid System */
+        .dates-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 14px; }
+        .dates-table td { border: 1px solid var(--border-color); padding: 8px; text-align: center; }
+        .bg-gray { background-color: #f5f5f5; font-weight: bold; }
+        .box-cell { width: 35px; height: 28px; }
+
+        /* Experiment Area */
+        .experiment-section { margin-bottom: 35px; font-size: 16px; line-height: 1.6; }
+        .experiment-section p { margin: 10px 0; font-weight: bold; }
+        .exp-value { font-weight: normal; font-style: italic; }
+
+        /* Split Panels (Submitted By vs Submitted To) */
+        .split-section { display: flex; width: 100%; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); font-size: 15px; min-height: 220px; }
+        .left-side { width: 50%; border-right: 1px solid var(--border-color); padding: 20px 15px 20px 0; }
+        .right-side { width: 50%; padding: 20px 0 20px 20px; }
+        
+        .section-title { text-align: center; font-weight: bold; font-style: italic; margin-bottom: 20px; text-decoration: underline; font-size: 16px; display: block; text-transform: capitalize; }
+        .info-row { margin-bottom: 12px; display: flex; }
+        .info-label { font-weight: bold; width: 95px; flex-shrink: 0; }
+        .info-value { flex-grow: 1; }
+
+        .teacher-info { margin-bottom: 18px; display: flex; line-height: 1.4; }
+        .teacher-num { width: 25px; font-weight: bold; }
+
+        /* Evaluation Marks Block */
+        .marks-section { margin-top: auto; margin-bottom: 35px; }
+        .marks-table { width: 85%; margin: 0 auto; border-collapse: collapse; font-size: 14px; }
+        .marks-table th, .marks-table td { border: 1px solid var(--border-color); padding: 10px; text-align: center; }
+        .marks-table th { background-color: #f5f5f5; }
+        .marks-table td { height: 35px; }
+
+        /* Authoritative Signature Layout */
+        .signature-section { margin-top: auto; text-align: left; padding-left: 8%; font-size: 14px; }
+        .sig-line { border-top: 1px dashed #000; width: 220px; margin-bottom: 6px; }
+        .sig-text { font-weight: bold; letter-spacing: 0.3px; }
+
+        /* AUTOMATED PRINT MODE */
+        @media print {
+            body { background: none; padding: 0; display: block; }
+            .form-container, .preview-container { display: none; }
+            .a4-page { box-shadow: none; padding: 18mm; margin: 0; width: 100%; height: 100%; page-break-after: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic Dashboard Panel -->
+    <div class="form-container">
+        <h2>Premium Dashboard</h2>
+        
+        <div class="form-group">
+            <label>Upload University Logo (Colorful & Auto-Saves)</label>
+            <div class="file-input-wrapper">
+                <div class="file-input-btn" id="upload-label">📁 Click to Upload Logo</div>
+                <input type="file" id="logo-uploader" accept="image/*">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Department Name</label>
+            <input type="text" id="input-dept" value="Department of Textile Engineering">
+        </div>
+        <div class="form-group">
+            <label>Course Code</label>
+            <input type="text" id="input-code" value="TE 3304">
+        </div>
+        <div class="form-group">
+            <label>Course Title</label>
+            <input type="text" id="input-title" value="Textile Coloration and Finishing Sessional">
+        </div>
+        <div class="form-group">
+            <label>Experiment No.</label>
+            <input type="text" id="input-exp-no" value="01">
+        </div>
+        <div class="form-group">
+            <label>Name of the Experiment</label>
+            <input type="text" id="input-exp-name" value="Study on the mechanical action of a dyeing machine.">
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #edf2f7; margin: 25px 0;">
+        <h3>STUDENT DATA (SUBMITTED BY)</h3>
+        <div class="form-group">
+            <label>Student Name</label>
+            <input type="text" id="input-student-name" value="Md. Abdun Nur">
+        </div>
+        <div class="form-group">
+            <label>Student ID</label>
+            <input type="text" id="input-student-id" value="2140xx">
+        </div>
+        <div class="form-group">
+            <label>Year / Semester</label>
+            <input type="text" id="input-year-sem" value="3/2">
+        </div>
+        <div class="form-group">
+            <label>Session</label>
+            <input type="text" id="input-session" value="2024-25">
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #edf2f7; margin: 25px 0;">
+        <h3>EVALUATORS (SUBMITTED TO)</h3>
+        <div class="form-group">
+            <label>Teacher 1 Name & Title</label>
+            <input type="text" id="input-t1-name" value="Dr. Muhammad Abdur Rashid">
+            <input type="text" id="input-t1-desig" value="Professor" style="margin-top:6px;">
+        </div>
+        <div class="form-group">
+            <label>Teacher 2 Name & Title</label>
+            <input type="text" id="input-t2-name" value="Dr. Anamul Hoque Bhuiyan">
+            <input type="text" id="input-t2-desig" value="Professor" style="margin-top:6px;">
+        </div>
+
+        <button class="print-btn" onclick="window.print()">⚡ Download Cover Page (PDF)</button>
+    </div>
+
+    <!-- Live Preview Premium Frame -->
+    <div class="preview-container">
+        <div class="a4-page">
+            <div class="outer-border">
+                <div class="inner-border">
+                    
+                    <!-- Top Academic Identity -->
+                    <div class="header">
+                        <div class="university-name">Dhaka University of Engineering & Technology, Gazipur</div>
+                        
+                        <!-- Automatic Logo Canvas -->
+                        <div class="logo-container" id="logo-canvas">
+                            <div class="logo-placeholder" id="placeholder-text">Upload Logo</div>
+                        </div>
+
+                        <div class="department-name" id="view-dept">Department of Textile Engineering</div>
+                    </div>
+
+                    <!-- Curricular Identity -->
+                    <div class="course-info">
+                        <p>Course Code: <span class="course-bold" id="view-code">TE 3304</span></p>
+                        <p>Course Title: <span class="course-italic course-bold" id="view-title">Textile Coloration and Finishing Sessional</span></p>
+                    </div>
+
+                    <!-- Grid Layout for Handwritten Dates -->
+                    <table class="dates-table">
+                        <tr>
+                            <td rowspan="2" class="bg-gray" style="width:22%;">Date of Allocation</td>
+                            <td class="bg-gray">D</td><td class="bg-gray">M</td><td class="bg-gray" style="width:65px;">Year</td>
+                            <td rowspan="2" class="bg-gray" style="width:25%;">Date of Submission</td>
+                            <td class="bg-gray">D</td><td class="bg-gray">M</td><td class="bg-gray" style="width:65px;">Year</td>
+                        </tr>
+                        <tr>
+                            <td class="box-cell"></td><td class="box-cell"></td><td class="box-cell"></td>
+                            <td class="box-cell"></td><td class="box-cell"></td><td class="box-cell"></td>
+                        </tr>
+                    </table>
+
+                    <!-- Lab Specific Content -->
+                    <div class="experiment-section">
+                        <p>Experiment No.: <span class="exp-value" id="view-exp-no">01</span></p>
+                        <p>Name of the Experiment: <span class="exp-value" id="view-exp-name">Study on the mechanical action of a dyeing machine.</span></p>
+                    </div>
+
+                    <!-- Twin Allocation Panels -->
+                    <div class="split-section">
+                        <div class="left-side">
+                            <span class="section-title">Submitted by</span>
+                            <div class="info-row"><div class="info-label">Name:</div><div class="info-value" id="view-student-name">Md. Abdun Nur</div></div>
+                            <div class="info-row"><div class="info-label">Department:</div><div class="info-value" id="view-student-dept">Department of Textile Engineering</div></div>
+                            <div class="info-row"><div class="info-label">Student ID:</div><div class="info-value" id="view-student-id">2140xx</div></div>
+                            <div class="info-row"><div class="info-label">Year/Sem:</div><div class="info-value" id="view-year-sem">3/2</div></div>
+                            <div class="info-row"><div class="info-label">Session:</div><div class="info-value" id="view-session">2024-25</div></div>
+                        </div>
+                        <div class="right-side">
+                            <span class="section-title">Submitted to</span>
+                            <div class="teacher-info">
+                                <div class="teacher-num">i.</div>
+                                <div>
+                                    <strong id="view-t1-name">Dr. Muhammad Abdur Rashid</strong><br>
+                                    <span id="view-t1-desig">Professor</span><br>
+                                    <span>Department of TE, DUET</span>
+                                </div>
+                            </div>
+                            <div class="teacher-info">
+                                <div class="teacher-num">ii.</div>
+                                <div>
+                                    <strong id="view-t2-name">Dr. Anamul Hoque Bhuiyan</strong><br>
+                                    <span id="view-t2-desig">Professor</span><br>
+                                    <span>Department of TE, DUET</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grade Architecture Table -->
+                    <div class="marks-section">
+                        <table class="marks-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50%;">Marks Allocated</th>
+                                    <th style="width: 50%;">Marks Obtained</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Institutional Verification Row -->
+                    <div class="signature-section">
+                        <div class="sig-line"></div>
+                        <div class="sig-text">Signature of Teacher</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Automation Script -->
+    <script>
+        const inputs = {
+            'input-dept': ['view-dept', 'view-student-dept'],
+            'input-code': ['view-code'],
+            'input-title': ['view-title'],
+            'input-exp-no': ['view-exp-no'],
+            'input-exp-name': ['view-exp-name'],
+            'input-student-name': ['view-student-name'],
+            'input-student-id': ['view-student-id'],
+            'input-year-sem': ['view-year-sem'],
+            'input-session': ['view-session'],
+            'input-t1-name': ['view-t1-name'],
+            'input-t1-desig': ['view-t1-desig'],
+            'input-t2-name': ['view-t2-name'],
+            'input-t2-desig': ['view-t2-desig']
+        };
+
+        // Live typing synchronization
+        Object.keys(inputs).forEach(id => {
+            document.getElementById(id).addEventListener('input', function() {
+                inputs[id].forEach(viewId => {
+                    document.getElementById(viewId).innerText = this.value;
+                });
+            });
+        });
+
+        // Smart LocalStorage Logo Logic
+        const logoUploader = document.getElementById('logo-uploader');
+        const logoCanvas = document.getElementById('logo-canvas');
+        const uploadLabel = document.getElementById('upload-label');
+
+        // Check if logo exists in browser memory on load
+        const savedLogo = localStorage.getItem('duet_saved_logo');
+        if (savedLogo) {
+            renderLogo(savedLogo);
+            uploadLabel.innerText = "🔄 Change Saved Logo";
+        }
+
+        logoUploader.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const base64Image = event.target.result;
+                    // Save to browser LocalStorage
+                    localStorage.setItem('duet_saved_logo', base64Image);
+                    renderLogo(base64Image);
+                    uploadLabel.innerText = "🔄 Change Saved Logo";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function renderLogo(base64Data) {
+            logoCanvas.innerHTML = `<img src="${base64Data}" class="logo-img" alt="University Logo">`;
+        }
+    </script>
+</body>
+</html>
